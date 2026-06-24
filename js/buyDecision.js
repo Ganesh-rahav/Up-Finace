@@ -120,6 +120,7 @@ function displayVerdict(verdict, name, price, reasons, impacts) {
   const area = document.getElementById('verdict-area');
   if (!area) return;
   area.style.display = 'block';
+  document.getElementById('verdict-placeholder')?.style && (document.getElementById('verdict-placeholder').style.display = 'none');
   area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
   const emojis = { approve: '✅', delay: '⏳', reject: '❌' };

@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antigravity AI CFO — Personal Finance Command Center</title>
+  <meta name="description" content="Your personal AI Chief Financial Officer — track wealth, investments, goals, and business finances all in one premium dashboard." />
+  <link rel="stylesheet" href="styles/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ─── SIDEBAR ─────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">⚡</div>
+      <h2>Antigravity CFO</h2>
+      <p id="sidebar-user-name">Ganesh</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <button class="nav-item active" data-tab="dashboard">
+        <span class="nav-icon">🏠</span> Dashboard
+      </button>
+      <button class="nav-item" data-tab="transactions">
+        <span class="nav-icon">💸</span> Transactions
+      </button>
+
+      <div class="nav-section-label">Wealth</div>
+      <button class="nav-item" data-tab="investments">
+        <span class="nav-icon">📈</span> Investments
+      </button>
+      <button class="nav-item" data-tab="goals">
+        <span class="nav-icon">🎯</span> Goals
+      </button>
+
+      <div class="nav-section-label">Business</div>
+      <button class="nav-item" data-tab="business">
+        <span class="nav-icon">🏢</span> Business Finance
+      </button>
+
+      <div class="nav-section-label">AI Tools</div>
+      <button class="nav-item" data-tab="buy">
+        <span class="nav-icon">🛒</span> Buy Decision
+      </button>
+      <button class="nav-item" data-tab="chat">
+        <span class="nav-icon">🤖</span> AI CFO Chat
+      </button>
+
+      <div class="nav-section-label">Reviews</div>
+      <button class="nav-item" data-tab="weekly-review">
+        <span class="nav-icon">📊</span> Weekly Review
+      </button>
+      <button class="nav-item" data-tab="monthly-review">
+        <span class="nav-icon">📅</span> Monthly Review
+      </button>
+
+      <div class="nav-section-label">System</div>
+      <button class="nav-item" data-tab="settings">
+        <span class="nav-icon">⚙️</span> Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="score-mini">
+        <div class="score-val" id="sidebar-score">—</div>
+        <div class="score-label">Financial Score</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN CONTENT ──────────────────────────────────── -->
+  <div class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1 id="topbar-title">🏠 Dashboard</h1>
+        <p id="topbar-sub">Your financial overview at a glance</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="btn-add-txn">+ Add Transaction</button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: DASHBOARD -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page active" id="page-dashboard">
+      <!-- Stat cards row -->
+      <div class="grid-4">
+        <div class="stat-card" style="--accent:var(--purple)">
+          <div class="stat-label">💎 Net Worth</div>
+          <div class="stat-value font-mono" id="dash-net-worth">—</div>
+          <div class="stat-sub">Portfolio + Savings</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--teal)">
+          <div class="stat-label">💰 Total Income</div>
+          <div class="stat-value font-mono text-teal" id="dash-monthly-income">—</div>
+          <div class="stat-sub">This month (all sources)</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--coral)">
+          <div class="stat-label">💸 Total Expenses</div>
+          <div class="stat-value font-mono text-coral" id="dash-monthly-expenses">—</div>
+          <div class="stat-sub">This month (all entities)</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--gold)">
+          <div class="stat-label">📊 Net Cash Flow</div>
+          <div class="stat-value font-mono" id="dash-net-cashflow">—</div>
+          <div class="stat-sub">Income minus expenses</div>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="stat-card" style="--accent:var(--teal)">
+          <div class="stat-label">📈 Portfolio Value</div>
+          <div class="stat-value font-mono text-teal" id="dash-portfolio">—</div>
+          <div class="stat-sub">Investments total</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--purple)">
+          <div class="stat-label">🏦 Savings Rate</div>
+          <div class="stat-value font-mono" id="dash-savings-rate">—</div>
+          <div class="stat-sub">Target: 30%+</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--teal)">
+          <div class="stat-label">💹 Investment Rate</div>
+          <div class="stat-value font-mono" id="dash-invest-rate">—</div>
+          <div class="stat-sub">Target: 30%+</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--gold)">
+          <div class="stat-label">🛡️ Emergency Fund</div>
+          <div class="stat-value font-mono" style="font-size:14px;margin-top:6px" id="dash-ef-label">Loading...</div>
+          <div class="progress-bar" style="margin:8px 0 4px"><div class="progress-fill" id="dash-ef-bar" style="width:0%;--start:var(--teal);--end:var(--gold)"></div></div>
+        </div>
+      </div>
+
+      <!-- Portfolio Goal Progress -->
+      <div class="card">
+        <div class="card-title">📈 Portfolio Goal — ₹5,00,000 Target</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:14px;color:var(--text-secondary)" id="dash-portfolio-val">Loading...</span>
+          <span style="font-size:18px;font-weight:800;color:var(--teal)" id="dash-portfolio-pct">0%</span>
+        </div>
+        <div class="progress-bar" style="height:14px">
+          <div class="progress-fill" id="dash-portfolio-progress" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="grid-2-1">
+        <!-- Charts -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div class="card">
+            <div class="card-title">💸 Spending by Category (This Month)</div>
+            <div class="chart-container chart-md">
+              <canvas id="expense-chart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">📊 Portfolio Allocation</div>
+            <div class="chart-container chart-md">
+              <canvas id="portfolio-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: Score + Alerts + Goals -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <!-- Financial Score -->
+          <div class="card" style="text-align:center">
+            <div class="card-title" style="justify-content:center">⚡ Financial Score</div>
+            <div class="score-ring-container">
+              <div class="score-ring">
+                <svg viewBox="0 0 130 130" width="140" height="140">
+                  <defs>
+                    <linearGradient id="scoreGradientExcellent" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#00d4aa"/>
+                      <stop offset="100%" style="stop-color:#6c63ff"/>
+                    </linearGradient>
+                    <linearGradient id="scoreGradientGood" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#ffd166"/>
+                      <stop offset="100%" style="stop-color:#00d4aa"/>
+                    </linearGradient>
+                    <linearGradient id="scoreGradientAverage" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#ff9f43"/>
+                      <stop offset="100%" style="stop-color:#ffd166"/>
+                    </linearGradient>
+                    <linearGradient id="scoreGradientPoor" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#ff6b6b"/>
+                      <stop offset="100%" style="stop-color:#ff9f43"/>
+                    </linearGradient>
+                  </defs>
+                  <circle class="ring-bg" cx="65" cy="65" r="60"/>
+                  <circle class="ring-fill" id="score-ring-fill" cx="65" cy="65" r="60"/>
+                </svg>
+                <div class="score-center">
+                  <div class="score-number" id="score-number">—</div>
+                  <div class="score-label" id="score-text">Loading</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CFO Alerts -->
+          <div class="card">
+            <div class="card-title">🤖 CFO Alerts</div>
+            <div class="alert-list" id="dash-alerts">
+              <div class="skeleton" style="height:60px;margin-bottom:8px"></div>
+              <div class="skeleton" style="height:60px;margin-bottom:8px"></div>
+              <div class="skeleton" style="height:60px"></div>
+            </div>
+          </div>
+
+          <!-- Priority Goals -->
+          <div class="card">
+            <div class="card-title">🎯 Priority Goals</div>
+            <div style="display:flex;flex-direction:column;gap:12px" id="dash-goals">
+              <div class="skeleton" style="height:80px;margin-bottom:8px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: TRANSACTIONS -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-transactions">
+      <div class="page-header">
+        <div>
+          <h2>💸 Transactions</h2>
+          <p>Track income & expenses across Personal, Tranzora, and Zero_Day_Crew</p>
+        </div>
+        <button class="btn btn-primary" id="btn-add-txn-page">+ Add Transaction</button>
+      </div>
+
+      <!-- Summary row -->
+      <div class="grid-3">
+        <div class="stat-card" style="--accent:var(--teal)">
+          <div class="stat-label">💰 Total Income</div>
+          <div class="stat-value font-mono text-teal" id="txn-total-income">—</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--coral)">
+          <div class="stat-label">💸 Total Expenses</div>
+          <div class="stat-value font-mono text-coral" id="txn-total-expenses">—</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--purple)">
+          <div class="stat-label">📊 Net</div>
+          <div class="stat-value font-mono" id="txn-net">—</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div class="month-nav">
+            <button id="txn-month-prev">◀</button>
+            <span class="month-display" id="txn-month-display">June 2026</span>
+            <button id="txn-month-next">▶</button>
+          </div>
+          <div class="filter-bar">
+            <select class="form-control" id="txn-filter-entity">
+              <option value="all">All Entities</option>
+              <option value="personal">Personal</option>
+              <option value="tranzora">Tranzora</option>
+              <option value="zerodaycrew">Zero_Day_Crew</option>
+            </select>
+            <select class="form-control" id="txn-filter-type">
+              <option value="all">All Types</option>
+              <option value="income">Income Only</option>
+              <option value="expense">Expenses Only</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Category / Note</th>
+                <th>Entity</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Recurring</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="txn-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted)">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: INVESTMENTS -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-investments">
+      <div class="page-header">
+        <div>
+          <h2>📈 Investments</h2>
+          <p>SIP tracker and portfolio progress toward ₹5,00,000</p>
+        </div>
+        <button class="btn btn-primary" id="btn-add-inv">+ Add Investment</button>
+      </div>
+
+      <div class="grid-4">
+        <div class="stat-card" style="--accent:var(--teal)">
+          <div class="stat-label">💎 Portfolio Value</div>
+          <div class="stat-value font-mono text-teal" id="inv-total-value">—</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--purple)">
+          <div class="stat-label">💸 Total Invested</div>
+          <div class="stat-value font-mono" id="inv-total-invested">—</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--teal)">
+          <div class="stat-label">📈 Total Returns</div>
+          <div class="stat-value font-mono" id="inv-total-return">—</div>
+          <div class="stat-sub" id="inv-return-pct">—</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--gold)">
+          <div class="stat-label">🎯 Goal Progress</div>
+          <div class="stat-value font-mono" id="inv-goal-pct">—</div>
+          <div class="stat-sub">of ₹5,00,000</div>
+        </div>
+      </div>
+
+      <!-- Progress to ₹5L -->
+      <div class="card">
+        <div class="card-title">🎯 Journey to ₹5,00,000 Portfolio</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span id="inv-goal-label" style="font-size:14px;color:var(--text-secondary)">—</span>
+          <span id="inv-goal-pct-2" style="font-size:18px;font-weight:800;color:var(--teal)"></span>
+        </div>
+        <div class="progress-bar" style="height:14px">
+          <div class="progress-fill" id="inv-goal-bar" style="width:0%"></div>
+        </div>
+        <div style="margin-top:10px;font-size:13px;color:var(--text-muted)" id="inv-months-to-goal">—</div>
+      </div>
+
+      <!-- Investment cards grid -->
+      <div class="grid-2" id="inv-cards">
+        <div class="skeleton" style="height:160px"></div>
+        <div class="skeleton" style="height:160px"></div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: GOALS -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-goals">
+      <div class="page-header">
+        <div>
+          <h2>🎯 Financial Goals</h2>
+          <p>Track every goal — from emergency fund to dream setup</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📊 Overall Progress</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:14px;color:var(--text-secondary)">
+            Total saved: <strong id="goals-total-saved">—</strong> of <strong id="goals-total-target">—</strong>
+          </span>
+          <span style="font-size:20px;font-weight:800;color:var(--teal)" id="goals-overall-pct">0%</span>
+        </div>
+        <div class="progress-bar" style="height:12px">
+          <div class="progress-fill" id="goals-overall-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="grid-2" id="goals-container">
+        <div class="skeleton" style="height:180px"></div>
+        <div class="skeleton" style="height:180px"></div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: BUSINESS -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-business">
+      <div class="page-header">
+        <div>
+          <h2>🏢 Business Finance</h2>
+          <p>Separate P&amp;L for Tranzora and Zero_Day_Crew</p>
+        </div>
+        <button class="btn btn-primary" id="btn-log-biz">+ Log Revenue</button>
+      </div>
+
+      <!-- Revenue chart -->
+      <div class="card">
+        <div class="card-title">📊 Revenue by Entity (Last 6 Months)</div>
+        <div class="chart-container chart-md">
+          <canvas id="biz-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- TRANZORA -->
+        <div class="business-entity-card">
+          <div class="biz-header">
+            <div class="biz-dot" style="background:var(--purple);box-shadow:0 0 10px var(--purple)"></div>
+            <div>
+              <div class="biz-name">🚀 Tranzora</div>
+              <div class="biz-desc">Software / Tech startup</div>
+            </div>
+          </div>
+          <div class="grid-3" style="gap:12px;margin-bottom:16px">
+            <div class="biz-stat">
+              <div class="biz-stat-label">Revenue (mo)</div>
+              <div class="biz-stat-val text-gold" id="tz-rev">—</div>
+            </div>
+            <div class="biz-stat">
+              <div class="biz-stat-label">Expenses (mo)</div>
+              <div class="biz-stat-val text-coral" id="tz-exp">—</div>
+            </div>
+            <div class="biz-stat">
+              <div class="biz-stat-label">Profit (mo)</div>
+              <div class="biz-stat-val" id="tz-profit">—</div>
+            </div>
+          </div>
+          <div class="grid-2" style="gap:12px;margin-bottom:14px">
+            <div class="biz-stat">
+              <div class="biz-stat-label">Total Revenue</div>
+              <div class="biz-stat-val text-teal" style="font-size:16px" id="tz-total-rev">—</div>
+            </div>
+            <div class="biz-stat">
+              <div class="biz-stat-label">Total Profit</div>
+              <div class="biz-stat-val" style="font-size:16px" id="tz-total-profit">—</div>
+            </div>
+          </div>
+          <div style="background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);border-radius:var(--radius-sm);padding:12px;font-size:13px;color:var(--text-secondary)" id="tz-reinvest">
+            📊 Log revenue to see reinvestment recommendations
+          </div>
+          <div style="margin-top:14px">
+            <div class="card-title">📋 Monthly History</div>
+            <div id="tz-history" style="max-height:200px;overflow-y:auto"></div>
+          </div>
+        </div>
+
+        <!-- ZERO_DAY_CREW -->
+        <div class="business-entity-card">
+          <div class="biz-header">
+            <div class="biz-dot" style="background:var(--teal);box-shadow:0 0 10px var(--teal)"></div>
+            <div>
+              <div class="biz-name">🔐 Zero_Day_Crew</div>
+              <div class="biz-desc">Cybersecurity / Bug Bounty</div>
+            </div>
+          </div>
+          <div class="grid-3" style="gap:12px;margin-bottom:16px">
+            <div class="biz-stat">
+              <div class="biz-stat-label">Revenue (mo)</div>
+              <div class="biz-stat-val text-gold" id="zdc-rev">—</div>
+            </div>
+            <div class="biz-stat">
+              <div class="biz-stat-label">Expenses (mo)</div>
+              <div class="biz-stat-val text-coral" id="zdc-exp">—</div>
+            </div>
+            <div class="biz-stat">
+              <div class="biz-stat-label">Profit (mo)</div>
+              <div class="biz-stat-val" id="zdc-profit">—</div>
+            </div>
+          </div>
+          <div class="grid-2" style="gap:12px;margin-bottom:14px">
+            <div class="biz-stat">
+              <div class="biz-stat-label">Total Revenue</div>
+              <div class="biz-stat-val text-teal" style="font-size:16px" id="zdc-total-rev">—</div>
+            </div>
+            <div class="biz-stat">
+              <div class="biz-stat-label">Total Profit</div>
+              <div class="biz-stat-val" style="font-size:16px" id="zdc-total-profit">—</div>
+            </div>
+          </div>
+          <div style="background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);border-radius:var(--radius-sm);padding:12px;font-size:13px;color:var(--text-secondary)" id="zdc-reinvest">
+            📊 Log revenue to see reinvestment recommendations
+          </div>
+          <div style="margin-top:14px">
+            <div class="card-title">📋 Monthly History</div>
+            <div id="zerodaycrew-history" style="max-height:200px;overflow-y:auto"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: BUY DECISION -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-buy">
+      <div class="page-header">
+        <div>
+          <h2>🛒 Buy Decision Analyzer</h2>
+          <p>Get your CFO's verdict before any non-essential purchase</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Input card -->
+        <div class="card">
+          <div class="card-title">📝 What do you want to buy?</div>
+          <div class="form-grid" style="gap:16px">
+            <div class="form-group">
+              <label for="buy-name">Item Name</label>
+              <input type="text" id="buy-name" class="form-control" placeholder="e.g., Gaming Headset, New Shoes, Course...">
+            </div>
+            <div class="form-group">
+              <label for="buy-price">Price (₹)</label>
+              <input type="number" id="buy-price" class="form-control" placeholder="e.g., 5000" min="0">
+            </div>
+            <div class="form-group">
+              <label for="buy-category">Category</label>
+              <select id="buy-category" class="form-control">
+                <option value="lifestyle">Lifestyle / Want</option>
+                <option value="gaming_setup">Gaming & Work Setup (P1 Goal)</option>
+                <option value="career">Career / Education</option>
+                <option value="essential">Essential Need</option>
+                <option value="business">Business Expense</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="buy-analyze-btn" style="margin-top:6px;justify-content:center">
+              ⚡ Get CFO Verdict
+            </button>
+          </div>
+
+          <div style="margin-top:24px">
+            <div class="card-title">📋 Decision Framework</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+              <div style="font-size:13px;color:var(--text-secondary);padding:8px 0;border-bottom:1px solid var(--border)">1. Does it align with your Priority 1 goals?</div>
+              <div style="font-size:13px;color:var(--text-secondary);padding:8px 0;border-bottom:1px solid var(--border)">2. Is your emergency fund &gt;50% funded?</div>
+              <div style="font-size:13px;color:var(--text-secondary);padding:8px 0;border-bottom:1px solid var(--border)">3. Will it keep savings + investments on track?</div>
+              <div style="font-size:13px;color:var(--text-secondary);padding:8px 0;border-bottom:1px solid var(--border)">4. Is there a cheaper alternative?</div>
+              <div style="font-size:13px;color:var(--text-secondary);padding:8px 0">5. Is now the right time, or can it wait?</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verdict card -->
+        <div>
+          <div id="verdict-area" style="display:none">
+            <div class="verdict-card approve" id="verdict-card">
+              <div class="verdict-emoji" id="verdict-emoji">✅</div>
+              <div class="verdict-label" id="verdict-label">APPROVED</div>
+              <div style="font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text-primary)" id="verdict-item-name"></div>
+              <div class="verdict-reason" id="verdict-reason"></div>
+            </div>
+
+            <div class="impact-grid">
+              <div class="impact-item">
+                <div class="impact-val" id="impact-income">—</div>
+                <div class="impact-lbl">% of Monthly Income</div>
+              </div>
+              <div class="impact-item">
+                <div class="impact-val" id="impact-sip">—</div>
+                <div class="impact-lbl">SIP Delay (days)</div>
+              </div>
+              <div class="impact-item">
+                <div class="impact-val" id="impact-ef">—</div>
+                <div class="impact-lbl">% of EF Target</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="verdict-placeholder" style="text-align:center;padding:60px 20px;color:var(--text-muted)">
+            <div style="font-size:60px;margin-bottom:16px">🔍</div>
+            <p style="font-size:15px;font-weight:600;margin-bottom:8px">Enter an item and get your CFO's verdict</p>
+            <p style="font-size:13px">The analyzer checks your current finances, goals, and priorities before deciding.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: AI CHAT -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-chat">
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+          <div class="chat-suggestions">
+            <button class="chat-suggestion">How should I allocate my Tranzora income?</button>
+            <button class="chat-suggestion">Should I buy a ₹8,000 mechanical keyboard?</button>
+            <button class="chat-suggestion">Explain SIP investing in simple terms</button>
+            <button class="chat-suggestion">What's my fastest path to ₹5 lakh portfolio?</button>
+            <button class="chat-suggestion">Give me a weekly review</button>
+            <button class="chat-suggestion">How to start investing as a student?</button>
+          </div>
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chat-input" rows="1" placeholder="Ask your AI CFO anything... (Enter to send, Shift+Enter for new line)"></textarea>
+            <button class="chat-send-btn" id="chat-send">➤</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: WEEKLY REVIEW -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-weekly-review">
+      <div class="page-header">
+        <div>
+          <h2>📊 Weekly Review</h2>
+          <p>Auto-generated financial assessment based on your data</p>
+        </div>
+      </div>
+      <div id="weekly-content" class="card" style="padding:28px">
+        <div class="skeleton" style="height:400px"></div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: MONTHLY REVIEW -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-monthly-review">
+      <div class="page-header">
+        <div>
+          <h2>📅 Monthly Review</h2>
+          <p>Complete monthly financial analysis and action plan</p>
+        </div>
+      </div>
+      <div id="monthly-content" class="card" style="padding:28px">
+        <div class="skeleton" style="height:500px"></div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PAGE: SETTINGS -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <main class="page" id="page-settings">
+      <div class="page-header">
+        <div>
+          <h2>⚙️ Settings</h2>
+          <p>Configure your profile, API key, income and allocation rules</p>
+        </div>
+      </div>
+
+      <form id="settings-form">
+        <div class="card" style="margin-bottom:20px">
+          <div class="settings-section">
+            <h3>👤 Profile</h3>
+            <div class="form-grid form-grid-2" style="gap:16px">
+              <div class="form-group">
+                <label for="set-name">Your Name</label>
+                <input type="text" id="set-name" name="name" class="form-control" placeholder="Ganesh">
+              </div>
+              <div class="form-group">
+                <label for="set-monthly-fixed">Monthly Fixed Income (₹)</label>
+                <input type="number" id="set-monthly-fixed" name="monthlyFixed" class="form-control" placeholder="6500">
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>🤖 Gemini AI API Key</h3>
+            <div style="background:rgba(124,111,255,0.07);border:1px solid rgba(124,111,255,0.2);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;font-size:13px;color:var(--text-secondary)">
+              💡 Get your free API key at <strong style="color:var(--purple-light)">aistudio.google.com</strong> → Create API Key. It's free for personal use.
+            </div>
+            <div class="form-group">
+              <label for="set-api-key">Gemini API Key</label>
+              <div style="display:flex;gap:8px">
+                <input type="password" id="set-api-key" name="apiKey" class="form-control api-key-input" placeholder="AIzaSy...">
+                <button type="button" id="toggle-api-key" class="btn btn-secondary">👁</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>💰 Fixed Income Allocation Rules</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Must sum to 100%. Total: <strong id="set-fixed-total">100%</strong></p>
+            <div class="form-grid form-grid-2" style="gap:14px">
+              <div class="form-group"><label>💾 Savings %</label><input type="number" id="set-alloc-savings" class="form-control" min="0" max="100"></div>
+              <div class="form-group"><label>📈 Investments %</label><input type="number" id="set-alloc-investments" class="form-control" min="0" max="100"></div>
+              <div class="form-group"><label>🏠 Essential Spending %</label><input type="number" id="set-alloc-essential" class="form-control" min="0" max="100"></div>
+              <div class="form-group"><label>✨ Lifestyle %</label><input type="number" id="set-alloc-lifestyle" class="form-control" min="0" max="100"></div>
+            </div>
+          </div>
+
+          <div class="settings-section" style="margin-bottom:0">
+            <h3>⚡ Dynamic Income Allocation Rules</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Must sum to 100%. Total: <strong id="set-dyn-total">100%</strong></p>
+            <div class="form-grid form-grid-2" style="gap:14px">
+              <div class="form-group"><label>📈 Investing %</label><input type="number" id="set-dyn-investing" class="form-control" min="0" max="100"></div>
+              <div class="form-group"><label>💾 Savings %</label><input type="number" id="set-dyn-savings" class="form-control" min="0" max="100"></div>
+              <div class="form-group"><label>🏢 Business Growth %</label><input type="number" id="set-dyn-business" class="form-control" min="0" max="100"></div>
+              <div class="form-group"><label>📚 Career Growth %</label><input type="number" id="set-dyn-career" class="form-control" min="0" max="100"></div>
+              <div class="form-group"><label>✨ Lifestyle %</label><input type="number" id="set-dyn-lifestyle" class="form-control" min="0" max="100"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+          <button type="submit" class="btn btn-primary">💾 Save Settings</button>
+          <button type="button" class="btn btn-secondary" id="reset-data-btn">🔄 Reset to Sample Data</button>
+          <button type="button" class="btn btn-danger" id="clear-data-btn">🗑 Clear All Data</button>
+        </div>
+      </form>
+    </main>
+
+  </div><!-- /.main-content -->
+</div><!-- /#app -->
+
+<!-- ─── MODALS ──────────────────────────────────────────── -->
+
+<!-- Add Transaction Modal -->
+<div class="modal-overlay" id="txn-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>💸 Add Transaction</h3>
+      <button class="modal-close" id="close-txn-modal">✕</button>
+    </div>
+    <form id="txn-form">
+      <div class="form-grid" style="gap:14px">
+        <div class="form-grid form-grid-2" style="gap:14px">
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" name="date" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Amount (₹) *</label>
+            <input type="number" name="amount" class="form-control" placeholder="0" min="0" step="0.01" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Type *</label>
+          <div class="toggle-group">
+            <button type="button" class="toggle-btn active-income" id="type-income-btn" onclick="document.querySelector('[name=txn-type]').value='income';document.getElementById('type-income-btn').classList.add('active-income');document.getElementById('type-expense-btn').classList.remove('active-expense');">↑ Income</button>
+            <button type="button" class="toggle-btn" id="type-expense-btn" onclick="document.querySelector('[name=txn-type]').value='expense';document.getElementById('type-expense-btn').classList.add('active-expense');document.getElementById('type-income-btn').classList.remove('active-income');">↓ Expense</button>
+          </div>
+          <input type="hidden" name="txn-type" value="income">
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select name="category" class="form-control" required>
+            <optgroup label="Income">
+              <option value="Gymnastics Teaching">Gymnastics Teaching</option>
+              <option value="Dance Teaching">Dance Teaching</option>
+              <option value="Tranzora Revenue">Tranzora Revenue</option>
+              <option value="Zero_Day_Crew Revenue">Zero_Day_Crew Revenue</option>
+              <option value="Freelance">Freelance</option>
+              <option value="Other Income">Other Income</option>
+            </optgroup>
+            <optgroup label="Expenses">
+              <option value="Food & Groceries">Food & Groceries</option>
+              <option value="Transport">Transport</option>
+              <option value="Education">Education / Career</option>
+              <option value="Investment - SIP">Investment - SIP</option>
+              <option value="Business Operations">Business Operations</option>
+              <option value="Lifestyle">Lifestyle</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Other Expense">Other Expense</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Entity *</label>
+          <select name="entity" class="form-control" required>
+            <option value="personal">👤 Personal</option>
+            <option value="tranzora">🚀 Tranzora</option>
+            <option value="zerodaycrew">🔐 Zero_Day_Crew</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Note (optional)</label>
+          <input type="text" name="note" class="form-control" placeholder="Brief description...">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" name="recurring" id="txn-recurring" style="width:16px;height:16px;accent-color:var(--purple)">
+          <label for="txn-recurring" style="font-size:13px;font-weight:500;cursor:pointer">Recurring monthly transaction</label>
+        </div>
+        <button type="submit" class="btn btn-primary" style="justify-content:center">Add Transaction ✓</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Investment Modal -->
+<div class="modal-overlay" id="inv-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📈 Add Investment</h3>
+      <button class="modal-close" id="close-inv-modal">✕</button>
+    </div>
+    <form id="inv-form">
+      <div class="form-grid" style="gap:14px">
+        <div class="form-group">
+          <label>Investment Name *</label>
+          <input type="text" name="name" class="form-control" placeholder="e.g., Nifty 50 Index SIP" required>
+        </div>
+        <div class="form-grid form-grid-2" style="gap:14px">
+          <div class="form-group">
+            <label>Type</label>
+            <select name="type" class="form-control">
+              <option value="SIP">SIP</option>
+              <option value="Lump Sum">Lump Sum</option>
+              <option value="FD">Fixed Deposit</option>
+              <option value="Gold">Digital Gold</option>
+              <option value="ETF">ETF</option>
+              <option value="Stocks">Stocks</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Monthly SIP Amount (₹)</label>
+            <input type="number" name="monthly" class="form-control" placeholder="0 if one-time">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Fund / Platform Name</label>
+          <input type="text" name="fund" class="form-control" placeholder="e.g., Nippon India Nifty 50, Zerodha...">
+        </div>
+        <div class="form-grid form-grid-2" style="gap:14px">
+          <div class="form-group">
+            <label>Total Invested (₹) *</label>
+            <input type="number" name="invested" class="form-control" placeholder="0" required>
+          </div>
+          <div class="form-group">
+            <label>Current Value (₹) *</label>
+            <input type="number" name="current" class="form-control" placeholder="0" required>
+          </div>
+        </div>
+        <div class="form-grid form-grid-2" style="gap:14px">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" name="startDate" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Color</label>
+            <input type="color" name="color" class="form-control" value="#7c6fff" style="height:42px;padding:4px">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-teal" style="justify-content:center">Add Investment ✓</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Goal Modal -->
+<div class="modal-overlay" id="goal-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🎯 Edit Goal</h3>
+      <button class="modal-close" id="close-goal-modal">✕</button>
+    </div>
+    <form id="goal-edit-form">
+      <div class="form-grid" style="gap:14px">
+        <div class="form-grid form-grid-2" style="gap:14px">
+          <div class="form-group">
+            <label>Goal Name</label>
+            <input type="text" id="goal-edit-name" name="name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Icon (emoji)</label>
+            <input type="text" id="goal-edit-icon" name="icon" class="form-control" placeholder="🎯">
+          </div>
+        </div>
+        <div class="form-grid form-grid-2" style="gap:14px">
+          <div class="form-group">
+            <label>Target Amount (₹)</label>
+            <input type="number" id="goal-edit-target" name="target" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Currently Saved (₹)</label>
+            <input type="number" id="goal-edit-current" name="current" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="goal-edit-description" name="description" class="form-control" placeholder="What is this goal for?">
+        </div>
+        <button type="submit" class="btn btn-primary" style="justify-content:center">Save Goal ✓</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Business Log Modal -->
+<div class="modal-overlay" id="biz-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🏢 Log Business Revenue</h3>
+      <button class="modal-close" id="close-biz-modal">✕</button>
+    </div>
+    <form id="biz-log-form">
+      <div class="form-grid" style="gap:14px">
+        <div class="form-group">
+          <label>Entity</label>
+          <select name="entity" class="form-control">
+            <option value="tranzora">🚀 Tranzora</option>
+            <option value="zerodaycrew">🔐 Zero_Day_Crew</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Month</label>
+          <input type="month" name="month" class="form-control">
+        </div>
+        <div class="form-grid form-grid-2" style="gap:14px">
+          <div class="form-group">
+            <label>Revenue (₹)</label>
+            <input type="number" name="revenue" class="form-control" placeholder="0" min="0">
+          </div>
+          <div class="form-group">
+            <label>Expenses (₹)</label>
+            <input type="number" name="expenses" class="form-control" placeholder="0" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <input type="text" name="notes" class="form-control" placeholder="Client payment, Bug bounty, etc.">
+        </div>
+        <button type="submit" class="btn btn-primary" style="justify-content:center">Log Entry ✓</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ─── TOAST CONTAINER ────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ─── SCRIPT ──────────────────────────────────────────── -->
+<script>
+  // Fix "Add Transaction" button on Transactions page to also open modal
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('btn-add-txn-page')?.addEventListener('click', () => {
+      document.getElementById('txn-modal')?.classList.add('open');
+    });
+    // Show verdict area only after analyzing
+    const verdictArea = document.getElementById('verdict-area');
+    const placeholder = document.getElementById('verdict-placeholder');
+    if (verdictArea) verdictArea.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'block';
+  });
+</script>
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>

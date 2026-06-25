@@ -1,7 +1,7 @@
 // ============================================================
 // INVESTMENTS TAB — Antigravity AI CFO
 // ============================================================
-import { getInvestments, addInvestment, deleteInvestment, updateInvestment, getTotalPortfolio, getTotalInvested, formatCurrency } from './data.js';
+import { getInvestments, addInvestment, deleteInvestment, updateInvestment, getTotalPortfolio, getTotalInvested, formatCurrency, sanitize } from './data.js';
 import { showToast } from './app.js';
 
 export function renderInvestments() {
@@ -43,8 +43,8 @@ export function renderInvestments() {
         <div class="investment-card" style="--inv-color:${inv.color || '#7c6fff'}">
           <div class="inv-header">
             <div>
-              <div class="inv-name">${inv.name}</div>
-              <div class="inv-type">${inv.type} • ${inv.fund}</div>
+              <div class="inv-name">${sanitize(inv.name)}</div>
+              <div class="inv-type">${sanitize(inv.type)} • ${sanitize(inv.fund)}</div>
             </div>
             <button class="btn btn-sm btn-danger" onclick="window.deleteInv('${inv.id}')">🗑</button>
           </div>
@@ -71,21 +71,6 @@ export function renderInvestments() {
       `;
     }).join('') + (invs.length === 0 ? '<div class="empty-state"><div class="empty-icon">📈</div><p>No investments yet. Add your first one!</p></div>' : '');
   }
-
-  window.deleteInv = (id) => {
-    deleteInvestment(id);
-    renderInvestments();
-    showToast('Investment removed', 'info');
-  };
-
-  window.updateInvValue = (id) => {
-    const val = parseFloat(document.getElementById('val-' + id)?.value);
-    if (!isNaN(val) && val >= 0) {
-      updateInvestment(id, { currentValue: val });
-      renderInvestments();
-      showToast('Value updated ✓', 'success');
-    }
-  };
 }
 
 function setEl(id, text) {
@@ -94,6 +79,22 @@ function setEl(id, text) {
 }
 
 export function initInvestments() {
+  // CRIT-03: assign once here, not inside renderInvestments().
+  // Prevents re-creation of these closures on every portfolio re-render.
+  window.deleteInv = (id) => {
+    deleteInvestment(id);
+    renderInvestments();
+    showToast('Investment removed', 'info');
+  };
+  window.updateInvValue = (id) => {
+    const val = parseFloat(document.getElementById('val-' + id)?.value);
+    if (!isNaN(val) && val >= 0) {
+      updateInvestment(id, { currentValue: val });
+      renderInvestments();
+      showToast('Value updated ✓', 'success');
+    }
+  };
+
   document.getElementById('inv-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);

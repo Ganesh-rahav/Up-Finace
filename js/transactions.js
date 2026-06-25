@@ -1,7 +1,7 @@
 // ============================================================
 // TRANSACTIONS TAB — Antigravity AI CFO
 // ============================================================
-import { getTransactions, addTransaction, deleteTransaction, formatCurrency, getMonthKey } from './data.js';
+import { getTransactions, addTransaction, deleteTransaction, formatCurrency, getMonthKey, sanitize } from './data.js';
 import { showToast } from './app.js';
 
 let currentFilter = { entity: 'all', type: 'all', month: getMonthKey() };
@@ -35,8 +35,8 @@ function renderTransactionTable() {
     <tr>
       <td><span class="font-mono" style="font-size:12px;color:var(--text-muted)">${t.date}</span></td>
       <td>
-        <div style="font-weight:600;font-size:13.5px">${t.category}</div>
-        ${t.note ? `<div style="font-size:12px;color:var(--text-muted)">${t.note}</div>` : ''}
+        <div style="font-weight:600;font-size:13.5px">${sanitize(t.category)}</div>
+        ${t.note ? `<div style="font-size:12px;color:var(--text-muted)">${sanitize(t.note)}</div>` : ''}
       </td>
       <td><span class="badge badge-${t.entity}">${entityLabel(t.entity)}</span></td>
       <td><span class="badge badge-${t.type}">${t.type === 'income' ? '↑ Income' : '↓ Expense'}</span></td>
@@ -50,11 +50,6 @@ function renderTransactionTable() {
     </tr>
   `).join('');
 
-  window.deleteTransaction = (id) => {
-    deleteTransaction(id);
-    renderTransactions();
-    showToast('Transaction deleted', 'info');
-  };
 }
 
 function entityLabel(e) {
@@ -80,6 +75,15 @@ function updateTransactionSummary() {
 }
 
 export function initTransactions() {
+  // CRIT-03: assign once at init, not inside renderTransactionTable().
+  // Previously this was re-defined on every table render, causing a race
+  // condition where clicking delete before a re-render threw TypeError.
+  window.deleteTransaction = (id) => {
+    deleteTransaction(id);
+    renderTransactions();
+    showToast('Transaction deleted', 'info');
+  };
+
   // Month filter buttons
   const prevBtn = document.getElementById('txn-month-prev');
   const nextBtn = document.getElementById('txn-month-next');

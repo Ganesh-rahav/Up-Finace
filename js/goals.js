@@ -1,7 +1,7 @@
 // ============================================================
 // GOALS TAB — Antigravity AI CFO
 // ============================================================
-import { getGoals, updateGoal, formatCurrency } from './data.js';
+import { getGoals, updateGoal, formatCurrency, sanitize } from './data.js';
 import { showToast } from './app.js';
 
 let editingGoalKey = null;
@@ -29,10 +29,10 @@ export function renderGoals() {
     return `
       <div class="goal-card" style="border-color:${pct >= 100 ? g.color : 'var(--border)'}">
         <div class="goal-card-header">
-          <span class="goal-icon">${g.icon}</span>
+          <span class="goal-icon">${sanitize(g.icon)}</span>
           <div style="flex:1">
-            <div class="goal-name">${g.name}</div>
-            <div class="goal-priority" style="color:${pColor}">P${g.priority} Priority • ${g.description || ''}</div>
+            <div class="goal-name">${sanitize(g.name)}</div>
+            <div class="goal-priority" style="color:${pColor}">P${g.priority} Priority • ${sanitize(g.description || '')}</div>
           </div>
           ${pct >= 100 ? '<span style="font-size:20px">🎉</span>' : ''}
           <button class="btn btn-sm btn-secondary" onclick="window.editGoal('${key}')">✏️ Edit</button>
@@ -59,7 +59,17 @@ export function renderGoals() {
       </div>
     `;
   }).join('');
+}
 
+function setEl(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+export function initGoals() {
+  // CRIT-03: assign once at init, not inside renderGoals().
+  // Both functions read from localStorage at call time, so moving them
+  // here is safe and eliminates re-creation on every goal render.
   window.addToGoal = (key) => {
     const val = parseFloat(document.getElementById('goal-add-' + key)?.value);
     const goals = getGoals();
@@ -71,7 +81,6 @@ export function renderGoals() {
       window.refreshDashboard?.();
     }
   };
-
   window.editGoal = (key) => {
     editingGoalKey = key;
     const goals = getGoals();
@@ -83,14 +92,7 @@ export function renderGoals() {
     document.getElementById('goal-edit-icon').value = g.icon;
     document.getElementById('goal-modal').classList.add('open');
   };
-}
 
-function setEl(id, text) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = text;
-}
-
-export function initGoals() {
   document.getElementById('goal-edit-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!editingGoalKey) return;

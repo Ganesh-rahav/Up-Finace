@@ -1,7 +1,7 @@
 // ============================================================
 // SETTINGS TAB — Antigravity AI CFO
 // ============================================================
-import { getSettings, saveSettings } from './data.js';
+import { getSettings, saveSettings, initializeData } from './data.js';
 import { showToast } from './app.js';
 
 export function renderSettings() {
@@ -9,7 +9,15 @@ export function renderSettings() {
 
   setVal('set-name', s.name);
   setVal('set-monthly-fixed', s.monthlyFixed);
-  setVal('set-api-key', s.geminiApiKey || '');
+  // CRIT-02: decode stored key for display so user sees their real API key.
+  // try/catch handles pre-fix plain-text keys gracefully.
+  let apiKeyDisplay = '';
+  try {
+    apiKeyDisplay = s.geminiApiKey ? atob(s.geminiApiKey) : '';
+  } catch {
+    apiKeyDisplay = s.geminiApiKey || '';
+  }
+  setVal('set-api-key', apiKeyDisplay);
 
   // Allocation — fixed
   setVal('set-alloc-savings', s.allocation?.fixed?.savings ?? 30);
@@ -64,7 +72,10 @@ export function initSettings() {
     const s = getSettings();
     s.name = document.getElementById('set-name')?.value || 'Ganesh';
     s.monthlyFixed = parseFloat(document.getElementById('set-monthly-fixed')?.value) || 6500;
-    s.geminiApiKey = document.getElementById('set-api-key')?.value?.trim() || '';
+    // CRIT-02: encode key with btoa() before writing to localStorage.
+    // atob() in aiChat.js reverses this. An empty key stays empty.
+    const rawKey = document.getElementById('set-api-key')?.value?.trim() || '';
+    s.geminiApiKey = rawKey ? btoa(rawKey) : '';
 
     s.allocation = {
       fixed: {
@@ -108,11 +119,14 @@ export function initSettings() {
   // Clear data
   document.getElementById('clear-data-btn')?.addEventListener('click', () => {
     if (confirm('⚠️ This will DELETE all your data permanently. Are you sure?')) {
-      Object.keys(localStorage).filter(k => k.startsWith('acfo_')).forEach(k => localStorage.removeItem(k));
-      localStorage.setItem('acfo_initialized', '0'); // force re-init as empty
-      Object.keys(localStorage).filter(k => k.startsWith('acfo_')).forEach(k => {
-        if (k !== 'acfo_initialized') localStorage.removeItem(k);
-      });
+      // CRIT-04: previous version set acfo_initialized='0' which is truthy,
+      // so initializeData() would skip re-seeding, leaving the app with no
+      // data and no defaults. Now we remove all keys then call initializeData
+      // directly with 'empty' mode for a valid, clean blank-slate state.
+      Object.keys(localStorage)
+        .filter(k => k.startsWith('acfo_'))
+        .forEach(k => localStorage.removeItem(k));
+      initializeData('empty');
       showToast('All data cleared. Refreshing...', 'info');
       setTimeout(() => location.reload(), 1200);
     }

@@ -1,7 +1,7 @@
 // ============================================================
 // BUSINESS FINANCE TAB — Antigravity AI CFO
 // ============================================================
-import { getBusiness, saveBusiness, getTransactions, formatCurrency, getMonthKey } from './data.js';
+import { getBusiness, saveBusiness, getTransactions, formatCurrency, getMonthKey, sanitize } from './data.js';
 import { showToast } from './app.js';
 
 let bizChart = null;
@@ -100,7 +100,7 @@ function renderBizHistory(biz) {
       const label = d.toLocaleString('default', { month: 'long', year: 'numeric' });
       return `
         <div class="review-item">
-          <span class="ri-label">${label} ${data.notes ? '• ' + data.notes : ''}</span>
+          <span class="ri-label">${label} ${data.notes ? '• ' + sanitize(data.notes) : ''}</span>
           <div style="text-align:right">
             <div class="ri-value text-teal" style="font-size:12px">Rev: ${formatCurrency(data.revenue)}</div>
             <div class="ri-value ${profit >= 0 ? 'text-teal' : 'text-coral'}" style="font-size:12px">Profit: ${formatCurrency(profit)}</div>

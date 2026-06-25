@@ -4,7 +4,7 @@
 import {
   getMonthlyMetrics, getTotalPortfolio, getTotalInvested, getNetWorth,
   getFinancialScore, getCategoryBreakdown, getGoals, getInvestments,
-  formatCurrency, getSettings, getMonthKey,
+  formatCurrency, getSettings, getMonthKey, sanitize,
 } from './data.js';
 
 let expenseChart = null;
@@ -205,9 +205,9 @@ function renderGoalHighlights(goals) {
     return `
       <div class="goal-card">
         <div class="goal-card-header">
-          <span class="goal-icon">${g.icon}</span>
+          <span class="goal-icon">${sanitize(g.icon)}</span>
           <div>
-            <div class="goal-name">${g.name}</div>
+            <div class="goal-name">${sanitize(g.name)}</div>
             <div class="goal-priority">Priority ${g.priority}</div>
           </div>
           <div class="goal-pct" style="margin-left:auto">${pct.toFixed(0)}%</div>

@@ -54,7 +54,14 @@ export async function sendMessage(userMessage) {
   if (isLoading || !userMessage.trim()) return;
 
   const settings = getSettings();
-  const apiKey = settings.geminiApiKey;
+  // CRIT-02: key is stored btoa-encoded. atob() decodes it.
+  // try/catch handles legacy plain-text keys stored before this fix.
+  let apiKey = '';
+  try {
+    apiKey = settings.geminiApiKey ? atob(settings.geminiApiKey) : '';
+  } catch {
+    apiKey = settings.geminiApiKey || ''; // plain-text fallback (pre-fix data)
+  }
 
   if (!apiKey) {
     appendMessage('ai', `⚠️ No Gemini API key configured. Please go to **Settings** and paste your API key to enable AI chat.\n\nYou can get a free API key at [aistudio.google.com](https://aistudio.google.com).`);

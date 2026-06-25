@@ -25,8 +25,13 @@ export function analyzePurchase() {
   const settings = getSettings();
 
   // Calculations
-  const personalIncome = metrics.personalIncome || 0;
-  const currentSavings = personalIncome - metrics.personalExpenses;
+  // HIGH-07: original used personalIncome - metrics.personalExpenses which could be
+  // negative mid-month before income arrives, causing false "savings go negative" flags.
+  // Use the projected full-month income (settings baseline) as the reference instead.
+  const projectedMonthlyIncome = metrics.personalIncome > 0
+    ? metrics.personalIncome          // use actual if income already logged this month
+    : (settings.monthlyFixed || 6500); // fall back to configured baseline
+  const currentSavings = projectedMonthlyIncome - metrics.personalExpenses;
   const efGoal = goals.emergencyFund;
   const efFunded = efGoal ? efGoal.current / efGoal.target : 1;
   const efDeficit = efGoal ? Math.max(0, efGoal.target - efGoal.current) : 0;
@@ -36,7 +41,7 @@ export function analyzePurchase() {
   const monthlySIP = invs.filter(i => i.monthlyAmount > 0).reduce((s, i) => s + i.monthlyAmount, 0);
 
   // Impact calculations
-  const incomeImpactPct = personalIncome > 0 ? ((price / personalIncome) * 100).toFixed(1) : 0;
+  const incomeImpactPct = projectedMonthlyIncome > 0 ? ((price / projectedMonthlyIncome) * 100).toFixed(1) : 0;
   const savingsAfter = currentSavings - price;
   const sipDaysDelayed = monthlySIP > 0 ? Math.round((price / monthlySIP) * 30) : 0;
 

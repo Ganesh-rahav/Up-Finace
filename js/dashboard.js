@@ -9,7 +9,8 @@ import {
 
 let expenseChart = null;
 let portfolioChart = null;
-let trendChart = null;
+// HIGH-08: trendChart removed — declared but never used. Mark as future work.
+// TODO: implement 6-month income/expense trend chart
 
 export function renderDashboard() {
   const now = new Date();

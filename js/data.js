@@ -254,8 +254,13 @@ export function getFinancialScore(monthKey) {
     else if (efPct >= 0.5) score += 5;
     else if (efPct >= 0.25) score += 2;
   }
-  // Business income bonus (max +10)
-  if (metrics.tranzIncome + metrics.zdcIncome > 0) score += 10;
+  // HIGH-06: previous binary check (any income > 0 = +10) meant ₹1 of biz income
+  // scored identically to ₹50,000, making the score gameable. Use a tiered scale instead.
+  const bizIncome = metrics.tranzIncome + metrics.zdcIncome;
+  if (bizIncome >= 10000) score += 10;
+  else if (bizIncome >= 5000) score += 7;
+  else if (bizIncome >= 1000) score += 3;
+  else if (bizIncome > 0) score += 1;
   // Overspending penalty
   if (metrics.personalExpenses > metrics.personalIncome) score -= 20;
   return Math.max(0, Math.min(100, Math.round(score)));

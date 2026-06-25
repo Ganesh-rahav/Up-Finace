@@ -96,16 +96,18 @@ export function initTransactions() {
   updateMonthDisplay();
 
   prevBtn?.addEventListener('click', () => {
-    const d = new Date(currentFilter.month + '-01');
-    d.setMonth(d.getMonth() - 1);
-    currentFilter.month = getMonthKey(d.toISOString());
+    // HIGH-04: avoid toISOString() which converts to UTC and can give the wrong
+    // month key in IST (UTC+5:30) at midnight boundaries. Use local date parts directly.
+    const [y, m] = currentFilter.month.split('-').map(Number);
+    const d = new Date(y, m - 2, 1); // m-2: month is 1-indexed, getMonth() is 0-indexed
+    currentFilter.month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     updateMonthDisplay();
     renderTransactions();
   });
   nextBtn?.addEventListener('click', () => {
-    const d = new Date(currentFilter.month + '-01');
-    d.setMonth(d.getMonth() + 1);
-    currentFilter.month = getMonthKey(d.toISOString());
+    const [y, m] = currentFilter.month.split('-').map(Number);
+    const d = new Date(y, m, 1); // m: next month (0-indexed = current month + 1)
+    currentFilter.month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     updateMonthDisplay();
     renderTransactions();
   });

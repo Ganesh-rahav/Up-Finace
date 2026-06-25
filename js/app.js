@@ -68,8 +68,12 @@ function switchTab(tabId) {
     settings: ['⚙️ Settings', 'Configure your profile and preferences'],
   };
   const [title, sub] = titles[tabId] || ['Antigravity AI CFO', ''];
-  document.getElementById('topbar-title')?.textContent && (document.getElementById('topbar-title').textContent = title);
-  document.getElementById('topbar-sub')?.textContent && (document.getElementById('topbar-sub').textContent = sub);
+  // HIGH-01: previous pattern used short-circuit (el?.textContent && el.textContent = val)
+  // which silently fails when textContent is an empty string (falsy). Use explicit null-check.
+  const titleEl = document.getElementById('topbar-title');
+  const subEl = document.getElementById('topbar-sub');
+  if (titleEl) titleEl.textContent = title;
+  if (subEl) subEl.textContent = sub;
 
   currentTab = tabId;
 

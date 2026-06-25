@@ -184,7 +184,9 @@ function renderMarkdown(text) {
     .replace(/#{2}\s(.+)/g, '<h3>$1</h3>')
     .replace(/#{1}\s(.+)/g, '<h3>$1</h3>')
     .replace(/^\s*[-•]\s(.+)/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    // HIGH-02: previous regex used /s flag (dotAll) and only ran once, failing to wrap
+    // multiple separate bullet lists. This version wraps every contiguous <li> group.
+    .replace(/((?:<li>[^<]*<\/li>\s*)+)/g, '<ul>$1</ul>')
     .replace(/\n\n/g, '</p><p>')
     .replace(/\n/g, '<br>');
 }

@@ -27,11 +27,30 @@ export function renderInvestments() {
   const bar = document.getElementById('inv-goal-bar');
   if (bar) bar.style.width = pct + '%';
   setEl('inv-goal-pct', pct.toFixed(1) + '%');
+  // HIGH-09: inv-goal-pct-2 is the large percentage display next to the progress
+  // bar label in HTML. It was never set, so it always showed blank.
+  setEl('inv-goal-pct-2', pct.toFixed(1) + '%');
   setEl('inv-goal-label', `${formatCurrency(totalPortfolio)} of ${formatCurrency(goal)} invested`);
   const remaining = goal - totalPortfolio;
   const monthlyContrib = invs.filter(i => i.monthlyAmount > 0).reduce((s, i) => s + i.monthlyAmount, 0);
-  const monthsToGoal = monthlyContrib > 0 ? Math.ceil(remaining / monthlyContrib) : '∞';
-  setEl('inv-months-to-goal', `At current pace (${formatCurrency(monthlyContrib)}/mo SIP): ~${monthsToGoal} months to goal`);
+  // HIGH-05: original formula (remaining / monthlyContrib) ignored portfolio growth returns,
+  // overestimating time to goal by 30-50% for index fund investors. This simulation
+  // compounds existing portfolio + future SIPs at a conservative 12% p.a. (1% monthly).
+  function monthsToReachGoal(currentVal, targetVal, monthlySIP) {
+    if (monthlySIP <= 0) return '∞';
+    const monthlyRate = 0.12 / 12; // 1% per month
+    let val = currentVal;
+    let months = 0;
+    while (val < targetVal && months < 600) { // 600 = 50-year cap
+      val = val * (1 + monthlyRate) + monthlySIP;
+      months++;
+    }
+    return months;
+  }
+  const monthsToGoal = monthlyContrib > 0
+    ? monthsToReachGoal(totalPortfolio, goal, monthlyContrib)
+    : '∞';
+  setEl('inv-months-to-goal', `At current pace (${formatCurrency(monthlyContrib)}/mo SIP, ~12% p.a.): ~${monthsToGoal} months to goal`);
 
   // Investment cards
   const container = document.getElementById('inv-cards');

@@ -89,7 +89,11 @@ function renderBizChart(biz, months) {
 
 function renderBizHistory(biz) {
   ['tranzora', 'zerodaycrew'].forEach(entity => {
-    const container = document.getElementById(`${entity === 'tranzora' ? 'tz' : 'zdc'}-history`);
+    // HIGH-03: HTML uses id="tz-history" for Tranzora and id="zerodaycrew-history"
+    // for Zero_Day_Crew. The old code computed "zdc-history" which never matched,
+    // leaving the ZDC history panel permanently blank.
+    const historyId = entity === 'tranzora' ? 'tz-history' : 'zerodaycrew-history';
+    const container = document.getElementById(historyId);
     if (!container) return;
     const e = biz[entity];
     const entries = Object.entries(e.months).sort(([a], [b]) => b.localeCompare(a));

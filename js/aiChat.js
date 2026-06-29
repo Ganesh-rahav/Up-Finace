@@ -97,13 +97,13 @@ export async function sendMessage(userMessage) {
   apiMessages.push({ role: 'user', parts: [{ text: contextMsg + '\n\n' + userMessage }] });
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         system_instruction: { parts: [{ text: CFO_SYSTEM_PROMPT }] },
         contents: apiMessages,
-        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
+        generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
       }),
     });
 

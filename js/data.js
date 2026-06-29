@@ -10,7 +10,11 @@ const DATA_KEYS = {
   SETTINGS: 'acfo_settings',
   CHAT: 'acfo_chat',
   INITIALIZED: 'acfo_initialized',
+  VERSION: 'acfo_data_version',
 };
+
+// Bump this string any time you want ALL users to get a fresh reset
+const DATA_VERSION = 'v2-fresh';
 
 // ─── DEFAULT SETTINGS ─────────────────────────────────────
 const DEFAULT_SETTINGS = {
@@ -25,53 +29,17 @@ const DEFAULT_SETTINGS = {
 };
 
 // ─── SAMPLE DATA ──────────────────────────────────────────
-const SAMPLE_TRANSACTIONS = [
-  // June 2026
-  { id: 't1', date: '2026-06-01', type: 'income', category: 'Gymnastics Teaching', amount: 4000, entity: 'personal', note: 'Monthly gymnastics salary', recurring: true },
-  { id: 't2', date: '2026-06-03', type: 'income', category: 'Dance Teaching', amount: 2500, entity: 'personal', note: 'Monthly dance salary', recurring: true },
-  { id: 't3', date: '2026-06-05', type: 'expense', category: 'Food & Groceries', amount: 1200, entity: 'personal', note: 'Monthly groceries', recurring: false },
-  { id: 't4', date: '2026-06-07', type: 'expense', category: 'Transport', amount: 400, entity: 'personal', note: 'Bus & auto', recurring: false },
-  { id: 't5', date: '2026-06-10', type: 'income', category: 'Tranzora Revenue', amount: 8000, entity: 'tranzora', note: 'Client project payment', recurring: false },
-  { id: 't6', date: '2026-06-12', type: 'expense', category: 'Business Operations', amount: 1500, entity: 'tranzora', note: 'Hosting + tools subscription', recurring: false },
-  { id: 't7', date: '2026-06-15', type: 'expense', category: 'Education', amount: 800, entity: 'personal', note: 'TryHackMe subscription', recurring: true },
-  { id: 't8', date: '2026-06-18', type: 'income', category: 'Zero_Day_Crew Revenue', amount: 3000, entity: 'zerodaycrew', note: 'Bug bounty payout', recurring: false },
-  { id: 't9', date: '2026-06-20', type: 'expense', category: 'Lifestyle', amount: 600, entity: 'personal', note: 'Eating out + entertainment', recurring: false },
-  { id: 't10', date: '2026-06-22', type: 'expense', category: 'Investment - SIP', amount: 2000, entity: 'personal', note: 'Nifty 50 Index SIP', recurring: true },
-  // May 2026
-  { id: 't11', date: '2026-05-01', type: 'income', category: 'Gymnastics Teaching', amount: 4000, entity: 'personal', note: '', recurring: true },
-  { id: 't12', date: '2026-05-03', type: 'income', category: 'Dance Teaching', amount: 2000, entity: 'personal', note: '', recurring: true },
-  { id: 't13', date: '2026-05-08', type: 'expense', category: 'Food & Groceries', amount: 1100, entity: 'personal', note: '', recurring: false },
-  { id: 't14', date: '2026-05-10', type: 'income', category: 'Tranzora Revenue', amount: 5000, entity: 'tranzora', note: 'Retainer fee', recurring: false },
-  { id: 't15', date: '2026-05-15', type: 'expense', category: 'Transport', amount: 350, entity: 'personal', note: '', recurring: false },
-  { id: 't16', date: '2026-05-20', type: 'expense', category: 'Investment - SIP', amount: 2000, entity: 'personal', note: 'Nifty 50 Index SIP', recurring: true },
-  { id: 't17', date: '2026-05-22', type: 'expense', category: 'Business Operations', amount: 800, entity: 'tranzora', note: 'Domain renewal', recurring: false },
-  { id: 't18', date: '2026-05-25', type: 'expense', category: 'Lifestyle', amount: 400, entity: 'personal', note: '', recurring: false },
-  // April 2026
-  { id: 't19', date: '2026-04-01', type: 'income', category: 'Gymnastics Teaching', amount: 4000, entity: 'personal', note: '', recurring: true },
-  { id: 't20', date: '2026-04-02', type: 'income', category: 'Dance Teaching', amount: 3000, entity: 'personal', note: '', recurring: true },
-  { id: 't21', date: '2026-04-05', type: 'expense', category: 'Food & Groceries', amount: 1300, entity: 'personal', note: '', recurring: false },
-  { id: 't22', date: '2026-04-10', type: 'income', category: 'Tranzora Revenue', amount: 12000, entity: 'tranzora', note: 'Big client project', recurring: false },
-  { id: 't23', date: '2026-04-12', type: 'expense', category: 'Business Operations', amount: 2000, entity: 'tranzora', note: 'Contractor payment', recurring: false },
-  { id: 't24', date: '2026-04-15', type: 'expense', category: 'Investment - SIP', amount: 2000, entity: 'personal', note: 'Nifty 50 Index SIP', recurring: true },
-  { id: 't25', date: '2026-04-18', type: 'income', category: 'Zero_Day_Crew Revenue', amount: 5000, entity: 'zerodaycrew', note: 'Security audit contract', recurring: false },
-  { id: 't26', date: '2026-04-20', type: 'expense', category: 'Education', amount: 1500, entity: 'personal', note: 'Security course purchase', recurring: false },
-  { id: 't27', date: '2026-04-25', type: 'expense', category: 'Lifestyle', amount: 800, entity: 'personal', note: 'New shoes', recurring: false },
-];
+const SAMPLE_TRANSACTIONS = [];
 
-const SAMPLE_INVESTMENTS = [
-  { id: 'i1', name: 'Nifty 50 Index Fund', type: 'SIP', fund: 'Nippon India Nifty 50', monthlyAmount: 2000, totalInvested: 6000, currentValue: 6420, startDate: '2026-04-01', color: '#6c63ff' },
-  { id: 'i2', name: 'Mid Cap Fund', type: 'SIP', fund: 'Axis Midcap Fund', monthlyAmount: 500, totalInvested: 1500, currentValue: 1580, startDate: '2026-04-01', color: '#00d4aa' },
-  { id: 'i3', name: 'Emergency Fund FD', type: 'FD', fund: 'SBI Fixed Deposit', monthlyAmount: 0, totalInvested: 5000, currentValue: 5175, startDate: '2025-12-01', color: '#ffd166' },
-  { id: 'i4', name: 'Digital Gold', type: 'Gold', fund: 'PhonePe Gold', monthlyAmount: 0, totalInvested: 1000, currentValue: 1085, startDate: '2026-02-15', color: '#ff9f43' },
-];
+const SAMPLE_INVESTMENTS = [];
 
 const SAMPLE_GOALS = {
-  gamingSetup: { name: 'Gaming & Work Setup', icon: '🎮', target: 80000, current: 12000, priority: 1, color: '#6c63ff', description: 'RTX GPU, Monitor, Mechanical Keyboard, Chair' },
-  emergencyFund: { name: 'Emergency Fund', icon: '🛡️', target: 30000, current: 8000, priority: 1, color: '#00d4aa', description: '3–6 months of expenses (target: ₹30,000)' },
-  careerFund: { name: 'Career Investment Fund', icon: '📚', target: 20000, current: 3500, priority: 1, color: '#a29bfe', description: 'Certifications, Labs, Security Tools, Books' },
-  bike: { name: 'Bike', icon: '🏍️', target: 120000, current: 5000, priority: 2, color: '#ffd166', description: 'Down payment + insurance for new bike' },
+  gamingSetup: { name: 'Gaming & Work Setup', icon: '🎮', target: 80000, current: 0, priority: 1, color: '#6c63ff', description: 'RTX GPU, Monitor, Mechanical Keyboard, Chair' },
+  emergencyFund: { name: 'Emergency Fund', icon: '🛡️', target: 30000, current: 0, priority: 1, color: '#00d4aa', description: '3–6 months of expenses (target: ₹30,000)' },
+  careerFund: { name: 'Career Investment Fund', icon: '📚', target: 20000, current: 0, priority: 1, color: '#a29bfe', description: 'Certifications, Labs, Security Tools, Books' },
+  bike: { name: 'Bike', icon: '🏍️', target: 120000, current: 0, priority: 2, color: '#ffd166', description: 'Down payment + insurance for new bike' },
   car: { name: 'Car', icon: '🚗', target: 300000, current: 0, priority: 3, color: '#ff9f43', description: 'Future goal — long term' },
-  lifestyle: { name: 'Lifestyle Fund', icon: '👟', target: 15000, current: 2000, priority: 4, color: '#fd79a8', description: 'Shoes, accessories, personal purchases' },
+  lifestyle: { name: 'Lifestyle Fund', icon: '👟', target: 15000, current: 0, priority: 4, color: '#fd79a8', description: 'Shoes, accessories, personal purchases' },
 };
 
 const SAMPLE_BUSINESS = {
@@ -79,21 +47,13 @@ const SAMPLE_BUSINESS = {
     name: 'Tranzora',
     description: 'Software/Tech startup',
     color: '#6c63ff',
-    months: {
-      '2026-06': { revenue: 8000, expenses: 1500, notes: 'Client project payment' },
-      '2026-05': { revenue: 5000, expenses: 800, notes: 'Retainer fee' },
-      '2026-04': { revenue: 12000, expenses: 2000, notes: 'Big client project' },
-    },
+    months: {},
   },
   zerodaycrew: {
     name: 'Zero_Day_Crew',
     description: 'Cybersecurity / Bug Bounty',
     color: '#00d4aa',
-    months: {
-      '2026-06': { revenue: 3000, expenses: 0, notes: 'Bug bounty payout' },
-      '2026-05': { revenue: 0, expenses: 0, notes: '' },
-      '2026-04': { revenue: 5000, expenses: 0, notes: 'Security audit contract' },
-    },
+    months: {},
   },
 };
 
@@ -103,6 +63,13 @@ const SAMPLE_BUSINESS = {
 // without reseeding sample transactions. Goals/Business structure is
 // preserved (needed for the app to render) but with zeroed progress.
 export function initializeData(forceMode = null) {
+  // If the stored data version doesn't match, wipe everything and re-seed
+  const storedVersion = localStorage.getItem(DATA_KEYS.VERSION);
+  if (storedVersion !== DATA_VERSION) {
+    Object.values(DATA_KEYS).forEach(k => localStorage.removeItem(k));
+  }
+
+  // Always re-initialize to ensure fresh empty state on first load
   if (localStorage.getItem(DATA_KEYS.INITIALIZED) && !forceMode) return;
   const useSamples = forceMode !== 'empty';
 
@@ -123,6 +90,7 @@ export function initializeData(forceMode = null) {
   localStorage.setItem(DATA_KEYS.SETTINGS, JSON.stringify(DEFAULT_SETTINGS));
   localStorage.setItem(DATA_KEYS.CHAT, JSON.stringify([]));
   localStorage.setItem(DATA_KEYS.INITIALIZED, '1');
+  localStorage.setItem(DATA_KEYS.VERSION, DATA_VERSION);
 }
 
 export function getSettings() {
